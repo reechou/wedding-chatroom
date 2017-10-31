@@ -207,6 +207,17 @@ func (self *Logic) EnterChatroom(w http.ResponseWriter, r *http.Request) {
 		ChatroomId: chatroom.ID,
 		UserId:     req.UserId,
 	}
+	has, err = models.GetChatroomMember(member)
+	if err != nil {
+		holmes.Error("get chatroom member error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
+		rsp.Msg = proto.MSG_ERROR_SYSTEM
+		return
+	}
+	if has {
+		rsp.Data = chatroom.ID
+		return 
+	}
 	if err := models.CreateChatroomMember(member); err != nil {
 		holmes.Error("create chatroom member error: %v", err)
 		rsp.Code = proto.RESPONSE_ERR
