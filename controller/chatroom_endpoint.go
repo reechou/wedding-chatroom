@@ -335,6 +335,7 @@ func (self *Logic) GetChatroomMessageList(w http.ResponseWriter, r *http.Request
 	for _, v := range userList {
 		userMap[v.ID] = &v
 	}
+	holmes.Debug("user map: %v", userMap)
 	var msgs []MessageDetail
 	for _, v := range msgList {
 		md := MessageDetail{
