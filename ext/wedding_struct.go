@@ -6,7 +6,7 @@ const (
 )
 
 const (
-	WEDDING_SERVICE_RPC_URI = "/socket/response.do"
+	WEDDING_SERVICE_RPC_URI = "/api/response.do"
 )
 
 const (
