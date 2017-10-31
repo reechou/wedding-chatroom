@@ -216,7 +216,7 @@ func (self *Logic) EnterChatroom(w http.ResponseWriter, r *http.Request) {
 	}
 	if has {
 		rsp.Data = chatroom.ID
-		return 
+		return
 	}
 	if err := models.CreateChatroomMember(member); err != nil {
 		holmes.Error("create chatroom member error: %v", err)

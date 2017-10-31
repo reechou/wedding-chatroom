@@ -24,7 +24,7 @@ const (
 )
 
 type GetWeddingUserListReqData struct {
-	WeddingId int64   `json:"catd_id"`
+	WeddingId int64   `json:"card_id"`
 	UserList  []int64 `json:"user_list"`
 }
 
