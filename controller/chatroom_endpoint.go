@@ -391,6 +391,7 @@ func (self *Logic) GetChatroomMemberList(w http.ResponseWriter, r *http.Request)
 		WeddingId: req.WeddingId,
 		UserList:  userIdList,
 	}
+	holmes.Debug("get user list req: %v", getUserListReq)
 	list.List, err = self.weddingExt.GetWeddingUserList(getUserListReq)
 	if err != nil {
 		holmes.Error("get chatroom[%d] wedding user list error: %v", req.ChatroomId, err)
