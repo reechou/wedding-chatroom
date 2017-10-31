@@ -365,6 +365,7 @@ func (self *Logic) GetChatroomMemberList(w http.ResponseWriter, r *http.Request)
 		holmes.Error("GetChatroomMemberList json decode error: %v", err)
 		return
 	}
+	holmes.Debug("get chatroom member list req: %v", req)
 	
 	list := &ChatroomMemberList{}
 	var err error
@@ -383,6 +384,10 @@ func (self *Logic) GetChatroomMemberList(w http.ResponseWriter, r *http.Request)
 		rsp.Msg = proto.MSG_ERROR_SYSTEM
 		return
 	}
+	holmes.Debug("member list: %v", memberList)
+	if len(memberList) == 0 {
+		return
+	}
 	var userIdList []int64
 	for i := 0; i < len(memberList); i++ {
 		userIdList = append(userIdList, memberList[i].UserId)
@@ -391,7 +396,6 @@ func (self *Logic) GetChatroomMemberList(w http.ResponseWriter, r *http.Request)
 		WeddingId: req.WeddingId,
 		UserList:  userIdList,
 	}
-	holmes.Debug("get user list req: %v", getUserListReq)
 	list.List, err = self.weddingExt.GetWeddingUserList(getUserListReq)
 	if err != nil {
 		holmes.Error("get chatroom[%d] wedding user list error: %v", req.ChatroomId, err)
