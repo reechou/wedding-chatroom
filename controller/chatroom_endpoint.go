@@ -312,7 +312,7 @@ func (self *Logic) GetChatroomMessageList(w http.ResponseWriter, r *http.Request
 	}
 	holmes.Debug("msg list: %v", msgList)
 	if len(msgList) == 0 {
-		return 
+		return
 	}
 	// get message user info list
 	var userIdList []int64
@@ -368,6 +368,7 @@ func (self *Logic) GetChatroomMemberList(w http.ResponseWriter, r *http.Request)
 		holmes.Error("GetChatroomMemberList json decode error: %v", err)
 		return
 	}
+	holmes.Debug("get chatroom member list req: %v", req)
 	
 	list := &ChatroomMemberList{}
 	var err error
