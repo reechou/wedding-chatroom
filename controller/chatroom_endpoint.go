@@ -310,7 +310,7 @@ func (self *Logic) GetChatroomMessageList(w http.ResponseWriter, r *http.Request
 		rsp.Msg = proto.MSG_ERROR_SYSTEM
 		return
 	}
-	//holmes.Debug("msg list: %v", msgList)
+	holmes.Debug("msg list: %v", msgList)
 	// get message user info list
 	var userIdList []int64
 	userMap := make(map[int64]*ext.UserInfoData)
@@ -335,7 +335,7 @@ func (self *Logic) GetChatroomMessageList(w http.ResponseWriter, r *http.Request
 	for i := 0; i < len(userList); i++ {
 		userMap[userList[i].ID] = &userList[i]
 	}
-	//holmes.Debug("user map: %v", userMap)
+	holmes.Debug("user map: %v", userMap)
 	var msgs []MessageDetail
 	for i := 0; i < len(msgList); i++ {
 		md := MessageDetail{
