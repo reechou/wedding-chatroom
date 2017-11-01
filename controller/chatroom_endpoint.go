@@ -311,6 +311,9 @@ func (self *Logic) GetChatroomMessageList(w http.ResponseWriter, r *http.Request
 		return
 	}
 	holmes.Debug("msg list: %v", msgList)
+	if len(msgList) == 0 {
+		return 
+	}
 	// get message user info list
 	var userIdList []int64
 	userMap := make(map[int64]*ext.UserInfoData)
