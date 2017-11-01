@@ -51,13 +51,13 @@ func GetChatroomMessageList(chatroomId, lastId, num int64) ([]ChatroomMessage, e
 	if lastId == 0 {
 		err = x.Table(&ChatroomMessage{ChatroomId: chatroomId}).
 			Where("chatroom_id = ?", chatroomId).
-			//Desc("id").
+			Desc("id").
 			Limit(int(num)).Find(&list)
 	} else {
 		err = x.Table(&ChatroomMessage{ChatroomId: chatroomId}).
 			Where("chatroom_id = ?", chatroomId).
 			And("id < ?", lastId).
-			//Desc("id").
+			Desc("id").
 			Limit(int(num)).Find(&list)
 	}
 	if err != nil {
