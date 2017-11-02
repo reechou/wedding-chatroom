@@ -274,6 +274,7 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 		rsp.Msg = proto.MSG_ERROR_SYSTEM
 		return
 	}
+	rsp.Data = chatroomMessage.ID
 	// broadcast
 	memberList, err := models.GetAllChatroomMemberList(req.ChatroomId)
 	if err != nil {
