@@ -36,7 +36,7 @@ func InitDB(cfg *config.Config) {
 		new(ChatroomMember)); err != nil {
 		holmes.Fatal("Fail to sync database: %v", err)
 	}
-	
+
 	for i := 0; i < CHATROOM_MESSAGE_NUM; i++ {
 		if err = x.Sync2(&ChatroomMessage{ChatroomId: int64(i)}); err != nil {
 			holmes.Fatal("Fail to sync database: %v", err)

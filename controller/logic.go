@@ -26,9 +26,9 @@ func NewLogic(cfg *config.Config) *Logic {
 	}
 	l.robotExt = ext.NewRobotExt(cfg)
 	l.weddingExt = ext.NewWeddingServiceExt(cfg)
-	
+
 	models.InitDB(cfg)
-	
+
 	l.init()
 
 	return l
@@ -36,7 +36,7 @@ func NewLogic(cfg *config.Config) *Logic {
 
 func (self *Logic) init() {
 	http.HandleFunc("/robot/receive_msg", self.RobotReceiveMsg)
-	
+
 	http.HandleFunc("/rpc", self.runRpc)
 }
 

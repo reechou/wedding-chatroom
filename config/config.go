@@ -47,7 +47,7 @@ type Config struct {
 	RobotControllerHost
 	DBInfo
 	Tuling
-	
+
 	WeddingService ServiceHost
 }
 

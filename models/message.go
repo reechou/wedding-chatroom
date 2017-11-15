@@ -1,10 +1,10 @@
 package models
 
 import (
-	"time"
-	"strconv"
 	"fmt"
-	
+	"strconv"
+	"time"
+
 	"github.com/reechou/holmes"
 )
 
@@ -30,18 +30,18 @@ func CreateChatroomMessage(info *ChatroomMessage) error {
 	if info.ChatroomId == 0 || info.UserId == 0 {
 		return fmt.Errorf("chatroom or user cannot be 0")
 	}
-	
+
 	now := time.Now().Unix()
 	info.CreatedAt = now
 	info.UpdatedAt = now
-	
+
 	_, err := x.Insert(info)
 	if err != nil {
 		holmes.Error("create chatroom message error: %v", err)
 		return err
 	}
 	holmes.Info("create chatroom message[%v] success.", info)
-	
+
 	return nil
 }
 

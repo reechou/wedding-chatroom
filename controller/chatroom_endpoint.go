@@ -2,13 +2,14 @@ package controller
 
 import (
 	"encoding/json"
-	"net/http"
 	"fmt"
+	"net/http"
+	"strings"
 
 	"github.com/reechou/holmes"
+	"github.com/reechou/wedding-chatroom/ext"
 	"github.com/reechou/wedding-chatroom/models"
 	"github.com/reechou/wedding-chatroom/proto"
-	"github.com/reechou/wedding-chatroom/ext"
 )
 
 func (self *Logic) runRpc(w http.ResponseWriter, r *http.Request) {
@@ -59,6 +60,7 @@ func (self *Logic) systemMsg(chatroomId, weddingId, userId int64, msg string) {
 		userList, err := self.weddingExt.GetWeddingUserList(getUserListReq)
 		if err != nil {
 			holmes.Error("get wedding user list error: %v", err)
+			message.Msg = strings.Replace(message.Msg, "%v", "", -1)
 		} else {
 			if len(userList) != 0 {
 				message.Msg = fmt.Sprintf(msg, userList[0].NickName)
@@ -244,7 +246,7 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 		holmes.Error("SendChatroomMsg json decode error: %v", err)
 		return
 	}
-	
+
 	chatroomMember := &models.ChatroomMember{
 		ChatroomId: req.ChatroomId,
 		UserId:     req.UserId,
@@ -293,17 +295,17 @@ func (self *Logic) GetChatroomMessageList(w http.ResponseWriter, r *http.Request
 	defer func() {
 		WriteJSON(w, http.StatusOK, rsp)
 	}()
-	
+
 	if r.Method != "POST" {
 		return
 	}
-	
+
 	req := &proto.GetChatroomMsgListReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("GetChatroomMessageList json decode error: %v", err)
 		return
 	}
-	
+
 	msgList, err := models.GetChatroomMessageList(req.ChatroomId, req.LastId, 10)
 	if err != nil {
 		holmes.Error("get chatroom message list error: %v", err)
@@ -359,18 +361,18 @@ func (self *Logic) GetChatroomMemberList(w http.ResponseWriter, r *http.Request)
 	defer func() {
 		WriteJSON(w, http.StatusOK, rsp)
 	}()
-	
+
 	if r.Method != "POST" {
 		return
 	}
-	
+
 	req := &proto.GetChatroomMemberListReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("GetChatroomMemberList json decode error: %v", err)
 		return
 	}
 	holmes.Debug("get chatroom member list req: %v", req)
-	
+
 	list := &ChatroomMemberList{}
 	var err error
 	list.Count, err = models.GetChatroomMemberCount(req.ChatroomId)
@@ -380,7 +382,7 @@ func (self *Logic) GetChatroomMemberList(w http.ResponseWriter, r *http.Request)
 		rsp.Msg = proto.MSG_ERROR_SYSTEM
 		return
 	}
-	
+
 	memberList, err := models.GetChatroomMemberList(req.ChatroomId, req.Offset, req.Num)
 	if err != nil {
 		holmes.Error("get chatroom[%d] member list error: %v", req.ChatroomId, err)

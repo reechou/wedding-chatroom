@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	
+
 	"github.com/reechou/holmes"
 	"github.com/reechou/wedding-chatroom/config"
 )
@@ -28,13 +28,13 @@ func (self *WeddingServiceExt) GetWeddingUserList(reqData *GetWeddingUserListReq
 		ActionName: ACTION_NAME_GET_USER_LIST,
 		Data:       reqData,
 	}
-	
+
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
 		holmes.Error("json encode error: %v", err)
 		return nil, err
 	}
-	
+
 	url := "http://" + self.cfg.WeddingService.Host + WEDDING_SERVICE_RPC_URI
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBytes))
 	if err != nil {
@@ -63,7 +63,7 @@ func (self *WeddingServiceExt) GetWeddingUserList(reqData *GetWeddingUserListReq
 		holmes.Error("[wedding service] get user list [%v] result code error: %d %s", request, response.Code, response.Msg)
 		return nil, fmt.Errorf("[wedding service] get user list error.")
 	}
-	
+
 	return response.Data, nil
 }
 
@@ -72,13 +72,13 @@ func (self *WeddingServiceExt) BroadcastMsg(reqData *BroadcastMsgReqData) error 
 		ActionName: ACTION_NAME_BROADCAST_MSG,
 		Data:       reqData,
 	}
-	
+
 	reqBytes, err := json.Marshal(request)
 	if err != nil {
 		holmes.Error("json encode error: %v", err)
 		return err
 	}
-	
+
 	url := "http://" + self.cfg.WeddingService.Host + WEDDING_SERVICE_RPC_URI
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(reqBytes))
 	if err != nil {
@@ -107,6 +107,6 @@ func (self *WeddingServiceExt) BroadcastMsg(reqData *BroadcastMsgReqData) error 
 		holmes.Error("[wedding service] broadcast [%v] result code error: %d %s", request, response.Code, response.Msg)
 		return fmt.Errorf("[wedding service] broadcast error.")
 	}
-	
+
 	return nil
 }
