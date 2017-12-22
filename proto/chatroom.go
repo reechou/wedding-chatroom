@@ -7,6 +7,8 @@ const (
 const (
 	MSG_ERROR_SYSTEM               = "系统错误"
 	MSG_ERROR_USER_NOT_IN_CHATROOM = "该用户不在房间内"
+	MSG_ERROR_CHATROOM_NOT_FOUND   = "该房间不存在"
+	MSG_ERROR_CHATROOM_GOSSIP      = "该房间禁言中"
 )
 
 // 创建现场房间
@@ -59,4 +61,12 @@ type GetChatroomMemberListReq struct {
 	Offset     int64 `json:"offset"`
 	Num        int64 `json:"num"`
 	WeddingId  int64 `json:"weddingId"`
+}
+
+// 设置房间状态
+// status 0: 正常状态, 1: 禁言状态
+type SetChatroomStatusReq struct {
+	ChatroomId int64 `json:"chatroomId"`
+	UserId     int64 `json:"userId"` // 操作人 user id
+	Status     int64 `json:"status"`
 }

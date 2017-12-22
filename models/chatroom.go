@@ -11,6 +11,7 @@ type Chatroom struct {
 	WeddingId int64  `xorm:"not null default 0 int unique(wedding_chatrrom)" json:"weddingId"`
 	ChatType  string `xorm:"not null default '' varchar(64) unique(wedding_chatrrom)" json:"chatType"`
 	Name      string `xorm:"not null default '' varchar(128)" json:"name"`
+	Status    int64  `xorm:"not null default 0 int index" json:"status"`
 	CreatedAt int64  `xorm:"not null default 0 int" json:"createdAt"`
 	UpdatedAt int64  `xorm:"not null default 0 int" json:"-"`
 }
@@ -40,4 +41,22 @@ func GetChatroom(info *Chatroom) (bool, error) {
 		return false, nil
 	}
 	return true, nil
+}
+
+func GetChatroomFromId(info *Chatroom) (bool, error) {
+	has, err := x.Id(info.ID).Get(info)
+	if err != nil {
+		return false, err
+	}
+	if !has {
+		holmes.Debug("cannot find chatroom from id[%d]", info.ID)
+		return false, nil
+	}
+	return true, nil
+}
+
+func UpdateChatroomStatus(info *Chatroom) error {
+	info.UpdatedAt = time.Now().Unix()
+	_, err := x.ID(info.ID).Cols("status", "updated_at").Update(info)
+	return err
 }

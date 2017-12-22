@@ -24,12 +24,16 @@ func (self *Logic) runRpc(w http.ResponseWriter, r *http.Request) {
 		self.CreateSceneChatroom(w, r)
 	case METHOD_ENTER_CHATROOM:
 		self.EnterChatroom(w, r)
+	case METHOD_ENTER_CHATROOM_WITH_INFO:
+		self.EnterChatroomWithInfo(w, r)
 	case METHOD_SEND_MSG:
 		self.SendChatroomMsg(w, r)
 	case METHOD_GET_MSG_LIST:
 		self.GetChatroomMessageList(w, r)
 	case METHOD_GET_CHATROOM_MEMBER_LIST:
 		self.GetChatroomMemberList(w, r)
+	case METHOD_SET_CHATROOM_STATUS:
+		self.SetChatroomStatus(w, r)
 	}
 }
 
@@ -231,6 +235,68 @@ func (self *Logic) EnterChatroom(w http.ResponseWriter, r *http.Request) {
 	self.systemMsg(chatroom.ID, req.WeddingId, req.UserId, SYSTEM_MSG_ENTER_ROOM)
 }
 
+func (self *Logic) EnterChatroomWithInfo(w http.ResponseWriter, r *http.Request) {
+	rsp := &proto.Response{Code: proto.RESPONSE_OK}
+	defer func() {
+		WriteJSON(w, http.StatusOK, rsp)
+	}()
+
+	if r.Method != "POST" {
+		return
+	}
+
+	req := &proto.EnterChatroomReq{}
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+		holmes.Error("EnterChatroomWithInfo json decode error: %v", err)
+		return
+	}
+
+	chatroom := &models.Chatroom{
+		WeddingId: req.WeddingId,
+		ChatType:  CHATROOM_WEDDING_SCENE,
+	}
+	has, err := models.GetChatroom(chatroom)
+	if err != nil {
+		holmes.Error("get chatroom error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
+		rsp.Msg = proto.MSG_ERROR_SYSTEM
+		return
+	}
+	if !has {
+		if err = models.CreateChatroom(chatroom); err != nil {
+			holmes.Error("create chatroom error: %v", err)
+			rsp.Code = proto.RESPONSE_ERR
+			rsp.Msg = proto.MSG_ERROR_SYSTEM
+			return
+		}
+	}
+
+	member := &models.ChatroomMember{
+		ChatroomId: chatroom.ID,
+		UserId:     req.UserId,
+	}
+	has, err = models.GetChatroomMember(member)
+	if err != nil {
+		holmes.Error("get chatroom member error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
+		rsp.Msg = proto.MSG_ERROR_SYSTEM
+		return
+	}
+	if has {
+		rsp.Data = chatroom
+		return
+	}
+	if err := models.CreateChatroomMember(member); err != nil {
+		holmes.Error("create chatroom member error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
+		rsp.Msg = proto.MSG_ERROR_SYSTEM
+		return
+	}
+	rsp.Data = chatroom
+	// broadcast
+	self.systemMsg(chatroom.ID, req.WeddingId, req.UserId, SYSTEM_MSG_ENTER_ROOM)
+}
+
 func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 	rsp := &proto.Response{Code: proto.RESPONSE_OK}
 	defer func() {
@@ -247,11 +313,27 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// check chatroom status
+	chatroom := &models.Chatroom{ID: req.ChatroomId}
+	has, err := models.GetChatroomFromId(chatroom)
+	if err != nil {
+		holmes.Error("get chatroom from id error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
+		rsp.Msg = proto.MSG_ERROR_CHATROOM_NOT_FOUND
+		return
+	}
+	if chatroom.Status == CHATROOM_STATUS_GOSSIP {
+		rsp.Code = proto.RESPONSE_ERR
+		rsp.Msg = proto.MSG_ERROR_CHATROOM_GOSSIP
+		return
+	}
+
+	// check chatroom member
 	chatroomMember := &models.ChatroomMember{
 		ChatroomId: req.ChatroomId,
 		UserId:     req.UserId,
 	}
-	has, err := models.GetChatroomMember(chatroomMember)
+	has, err = models.GetChatroomMember(chatroomMember)
 	if err != nil {
 		holmes.Error("get chatroom member error: %v", err)
 		rsp.Code = proto.RESPONSE_ERR
@@ -409,4 +491,37 @@ func (self *Logic) GetChatroomMemberList(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	rsp.Data = list
+}
+
+func (self *Logic) SetChatroomStatus(w http.ResponseWriter, r *http.Request) {
+	rsp := &proto.Response{Code: proto.RESPONSE_OK}
+	defer func() {
+		WriteJSON(w, http.StatusOK, rsp)
+	}()
+
+	if r.Method != "POST" {
+		return
+	}
+
+	req := &proto.SetChatroomStatusReq{}
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+		holmes.Error("SetChatroomStatus json decode error: %v", err)
+		return
+	}
+	holmes.Debug("set chatroom status req: %v", req)
+
+	chatroom := &models.Chatroom{ID: req.ChatroomId, Status: req.Status}
+	err := models.UpdateChatroomStatus(chatroom)
+	if err != nil {
+		holmes.Error("update chatroom status error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
+		rsp.Msg = proto.MSG_ERROR_SYSTEM
+		return
+	}
+	// broadcast
+	if req.Status == CHATROOM_STATUS_GOSSIP {
+		self.systemMsg(chatroom.ID, 0, req.UserId, SYSTEM_MSG_ROOM_GOSSIP)
+	} else if req.Status == CHATROOM_STATUS_OK {
+		self.systemMsg(chatroom.ID, 0, req.UserId, SYSTEM_MSG_ROOM_RESUME)
+	}
 }
