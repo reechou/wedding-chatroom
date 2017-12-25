@@ -28,6 +28,10 @@ const (
 	CHATROOM_MSG_TYPE_RED_ENVELOPES
 )
 
+const (
+	CHATROOM_MSG_TYPE_STATUS = 99
+)
+
 // chatroom status
 const (
 	CHATROOM_STATUS_OK = iota

@@ -16,7 +16,7 @@ type ChatroomMessage struct {
 	ID         int64  `xorm:"pk autoincr" json:"id"`
 	ChatroomId int64  `xorm:"not null default 0 int index" json:"chatroomId"`
 	UserId     int64  `xorm:"not null default 0 int" json:"userId"`
-	MsgType    int64  `xorm:"not null default 0 int" json:"msgType"`
+	MsgType    int64  `xorm:"not null default 0 int index" json:"msgType"`
 	Msg        string `xorm:"not null default '' varchar(1024)" json:"msg"` // json
 	CreatedAt  int64  `xorm:"not null default 0 int" json:"createdAt"`
 	UpdatedAt  int64  `xorm:"not null default 0 int" json:"-"`
