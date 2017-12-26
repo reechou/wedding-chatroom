@@ -107,6 +107,7 @@ func (self *WeddingServiceExt) BroadcastMsg(reqData *BroadcastMsgReqData) error 
 		holmes.Error("[wedding service] broadcast [%v] result code error: %d %s", request, response.Code, response.Msg)
 		return fmt.Errorf("[wedding service] broadcast error.")
 	}
+	holmes.Debug("broadcast msg type[%d] content[%s] success.", reqData.MsgType, reqData.Content)
 
 	return nil
 }
