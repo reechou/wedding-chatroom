@@ -1,9 +1,11 @@
 package controller
 
 const (
-	SERVICE_NAME = "Chatroom"
+	CHATROOM_SERVICE_NAME = "Chatroom"
+	LOTTERY_SERVICE_NAME  = "Lottery"
 )
 
+// chatroom method
 const (
 	METHOD_CREATE_CHATROOM          = "CreateChatroom"
 	METHOD_ENTER_CHATROOM           = "EnterChatroom"
@@ -13,6 +15,9 @@ const (
 	METHOD_GET_CHATROOM_MEMBER_LIST = "GetChatroomMemberList"
 	METHOD_SET_CHATROOM_STATUS      = "SetChatroomStatus"
 )
+
+// lottery method
+const ()
 
 // chatroom type
 const (
@@ -43,4 +48,11 @@ const (
 	SYSTEM_MSG_ENTER_ROOM  = "宾客 %v 进入房间"
 	SYSTEM_MSG_ROOM_GOSSIP = "房间开始禁言"
 	SYSTEM_MSG_ROOM_RESUME = "房间已恢复"
+)
+
+// lottery status
+const (
+	LOTTERY_STATUS_NOT_START = iota
+	LOTTERY_STATUS_STARTED
+	LOTTERY_STATUS_ENDED
 )

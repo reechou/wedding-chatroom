@@ -14,8 +14,8 @@ import (
 
 func (self *Logic) runRpc(w http.ResponseWriter, r *http.Request) {
 	serviceName := r.Header.Get("ServerName")
-	if serviceName != SERVICE_NAME {
-		holmes.Error("rpc service name[%s] is not self[%s]", serviceName, SERVICE_NAME)
+	if serviceName != CHATROOM_SERVICE_NAME {
+		holmes.Error("rpc service name[%s] is not self[%s]", serviceName, CHATROOM_SERVICE_NAME)
 		return
 	}
 	methodName := r.Header.Get("MethodName")
@@ -411,7 +411,7 @@ func (self *Logic) GetChatroomMessageList(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	msgList, err := models.GetChatroomMessageList(req.ChatroomId, req.LastId, 10)
+	msgList, err := models.GetChatroomMessageList(req.ChatroomId, req.LastId, 20)
 	if err != nil {
 		holmes.Error("get chatroom message list error: %v", err)
 		rsp.Code = proto.RESPONSE_ERR
