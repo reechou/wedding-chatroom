@@ -250,6 +250,7 @@ func (self *Logic) EnterChatroomWithInfo(w http.ResponseWriter, r *http.Request)
 		holmes.Error("EnterChatroomWithInfo json decode error: %v", err)
 		return
 	}
+	holmes.Debug("enter room req: %+v", req)
 
 	chatroom := &models.Chatroom{
 		WeddingId: req.WeddingId,
