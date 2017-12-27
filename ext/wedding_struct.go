@@ -48,6 +48,7 @@ type WeddingServiceRsp struct {
 type UserInfoData struct {
 	ID       int64  `json:"id"`
 	NickName string `json:"nick_name"`
+	RealName string `json:"real_name"`
 	Pic      string `json:"pic"`
 	UserRole int64  `json:"user_status"`
 }
