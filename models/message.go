@@ -66,3 +66,32 @@ func GetChatroomMessageList(chatroomId, lastId, num int64) ([]ChatroomMessage, e
 	}
 	return list, nil
 }
+
+type BroadcastMessage struct {
+	ID         int64  `xorm:"pk autoincr" json:"id"`
+	ChatroomId int64  `xorm:"not null default 0 int index" json:"chatroomId"`
+	UserId     int64  `xorm:"not null default 0 int" json:"userId"`
+	MsgType    int64  `xorm:"not null default 0 int index" json:"msgType"`
+	Msg        string `xorm:"not null default '' varchar(1024)" json:"msg"` // json
+	CreatedAt  int64  `xorm:"not null default 0 int" json:"createdAt"`
+	UpdatedAt  int64  `xorm:"not null default 0 int" json:"-"`
+}
+
+func CreateBroadcastMessage(info *BroadcastMessage) error {
+	if info.ChatroomId == 0 || info.UserId == 0 {
+		return fmt.Errorf("chatroom or user cannot be 0")
+	}
+
+	now := time.Now().Unix()
+	info.CreatedAt = now
+	info.UpdatedAt = now
+
+	_, err := x.Insert(info)
+	if err != nil {
+		holmes.Error("create broadcast message error: %v", err)
+		return err
+	}
+	holmes.Info("create broadcast message[%v] success.", info)
+
+	return nil
+}

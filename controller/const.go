@@ -11,6 +11,7 @@ const (
 	METHOD_ENTER_CHATROOM           = "EnterChatroom"
 	METHOD_ENTER_CHATROOM_WITH_INFO = "EnterChatroomWithInfo"
 	METHOD_SEND_MSG                 = "SendMessage"
+	METHOD_BROADCAST_MSG            = "BroadcastMessage"
 	METHOD_GET_MSG_LIST             = "GetMessageList"
 	METHOD_GET_CHATROOM_MEMBER_LIST = "GetChatroomMemberList"
 	METHOD_SET_CHATROOM_STATUS      = "SetChatroomStatus"

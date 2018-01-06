@@ -33,7 +33,8 @@ func InitDB(cfg *config.Config) {
 
 	// sync tables
 	if err = x.Sync2(new(Chatroom),
-		new(ChatroomMember)); err != nil {
+		new(ChatroomMember),
+		new(BroadcastMessage)); err != nil {
 		holmes.Fatal("Fail to sync database: %v", err)
 	}
 

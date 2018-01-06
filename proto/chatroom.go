@@ -47,6 +47,16 @@ type SendChatroomMsgReq struct {
 	Msg        string `json:"msg"`
 }
 
+// 广播消息
+type BroadcastMsgReq struct {
+	ChatroomId int64  `json:"chatroomId"`
+	WeddingId  int64  `json:"weddingId"`
+	UserId     int64  `json:"userId"`
+	MsgType    int64  `json:"msgType"`
+	Msg        string `json:"msg"`
+	IsNotice   int64  `json:"isNotice"`
+}
+
 // 获取房间历史消息
 type GetChatroomMsgListReq struct {
 	ChatroomId int64 `json:"chatroomId"`

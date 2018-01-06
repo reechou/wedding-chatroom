@@ -28,6 +28,8 @@ func (self *Logic) runRpc(w http.ResponseWriter, r *http.Request) {
 		self.EnterChatroomWithInfo(w, r)
 	case METHOD_SEND_MSG:
 		self.SendChatroomMsg(w, r)
+	case METHOD_BROADCAST_MSG:
+		self.BroadcastMsg(w, r)
 	case METHOD_GET_MSG_LIST:
 		self.GetChatroomMessageList(w, r)
 	case METHOD_GET_CHATROOM_MEMBER_LIST:
@@ -40,6 +42,11 @@ func (self *Logic) runRpc(w http.ResponseWriter, r *http.Request) {
 type MessageDetail struct {
 	Msg  *models.ChatroomMessage `json:"msg"`
 	User *ext.UserInfoData       `json:"user"`
+}
+
+type BroadcastMessageDetail struct {
+	Msg  *models.BroadcastMessage `json:"msg"`
+	User *ext.UserInfoData        `json:"user"`
 }
 
 type ChatroomMemberList struct {
@@ -93,7 +100,7 @@ func (self *Logic) systemMsg(chatroomId, weddingId, userId int64, msg string) {
 }
 
 func (self *Logic) broadcastChatroomMsgV2(userIdList []int64,
-	msg *MessageDetail,
+	msg interface{},
 	isNotice int64) {
 	msgBytes, err := json.Marshal(msg)
 	if err != nil {
@@ -393,6 +400,66 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 			chatroomMemberList[i] = memberList[i].UserId
 		}
 		self.broadcastChatroomMsg(chatroomMemberList, chatroomMessage, req.WeddingId, ext.BROADCAST_MSG_NOT_NOTICE)
+	}
+}
+
+func (self *Logic) BroadcastMsg(w http.ResponseWriter, r *http.Request) {
+	rsp := &proto.Response{Code: proto.RESPONSE_OK}
+	defer func() {
+		WriteJSON(w, http.StatusOK, rsp)
+	}()
+
+	if r.Method != "POST" {
+		return
+	}
+
+	req := &proto.BroadcastMsgReq{}
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+		holmes.Error("BroadcastChatroomMsg json decode error: %v", err)
+		return
+	}
+
+	broadcastMessage := &models.BroadcastMessage{
+		ChatroomId: req.ChatroomId,
+		UserId:     req.UserId,
+		MsgType:    req.MsgType,
+		Msg:        req.Msg,
+	}
+	if err := models.CreateBroadcastMessage(broadcastMessage); err != nil {
+		holmes.Error("create broadcast message error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
+		rsp.Msg = proto.MSG_ERROR_SYSTEM
+		return
+	}
+	rsp.Data = broadcastMessage.ID
+	// broadcast
+	memberList, err := models.GetAllChatroomMemberList(req.ChatroomId)
+	if err != nil {
+		holmes.Error("get all chatroom member list error: %v", err)
+	} else {
+		chatroomMemberList := make([]int64, len(memberList))
+		for i := 0; i < len(memberList); i++ {
+			chatroomMemberList[i] = memberList[i].UserId
+		}
+		md := &BroadcastMessageDetail{
+			Msg: broadcastMessage,
+		}
+		if req.UserId != 0 && req.WeddingId != 0 {
+			userIdReq := []int64{req.UserId}
+			getUserListReq := &ext.GetWeddingUserListReqData{
+				WeddingId: req.WeddingId,
+				UserList:  userIdReq,
+			}
+			userList, err := self.weddingExt.GetWeddingUserList(getUserListReq)
+			if err != nil {
+				holmes.Error("get wedding user list error: %v", err)
+			} else {
+				if len(userList) != 0 {
+					md.User = &userList[0]
+				}
+			}
+		}
+		self.broadcastChatroomMsgV2(chatroomMemberList, md, req.IsNotice)
 	}
 }
 
