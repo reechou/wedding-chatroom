@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/reechou/holmes"
 	"github.com/reechou/wedding-chatroom/ext"
@@ -19,6 +20,12 @@ func (self *Logic) runRpc(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	methodName := r.Header.Get("MethodName")
+
+	start := time.Now()
+	defer func() {
+		holmes.Debug("http: request method[%s] use_time[%v]", methodName, time.Now().Sub(start))
+	}()
+
 	switch methodName {
 	case METHOD_CREATE_CHATROOM:
 		self.CreateSceneChatroom(w, r)
