@@ -328,8 +328,6 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	start := time.Now()
-
 	// check chatroom status
 	chatroom := &models.Chatroom{ID: req.ChatroomId}
 	has, err := models.GetChatroomFromId(chatroom)
@@ -339,8 +337,6 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 		rsp.Msg = proto.MSG_ERROR_CHATROOM_NOT_FOUND
 		return
 	}
-	holmes.Debug("get chatroom from id use_time[%v]", time.Now().Sub(start))
-	start = time.Now()
 	if chatroom.Status == CHATROOM_STATUS_GOSSIP {
 		// check user role
 		userIdReq := []int64{req.UserId}
@@ -382,8 +378,6 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 		rsp.Msg = proto.MSG_ERROR_SYSTEM
 		return
 	}
-	holmes.Debug("get chatroom member use_time[%v]", time.Now().Sub(start))
-	start = time.Now()
 	if !has {
 		rsp.Code = proto.RESPONSE_USER_NOT_IN_CHATROOM
 		rsp.Msg = proto.MSG_ERROR_USER_NOT_IN_CHATROOM
@@ -403,21 +397,16 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	rsp.Data = chatroomMessage.ID
-	holmes.Debug("create chatroom message use_time[%v]", time.Now().Sub(start))
-	start = time.Now()
 	// broadcast
 	memberList, err := models.GetAllChatroomMemberList(req.ChatroomId)
 	if err != nil {
 		holmes.Error("get all chatroom member list error: %v", err)
 	} else {
-		holmes.Debug("get all chatroom member list use_time[%v]", time.Now().Sub(start))
-		start = time.Now()
 		chatroomMemberList := make([]int64, len(memberList))
 		for i := 0; i < len(memberList); i++ {
 			chatroomMemberList[i] = memberList[i].UserId
 		}
 		self.broadcastChatroomMsg(chatroomMemberList, chatroomMessage, req.WeddingId, ext.BROADCAST_MSG_NOT_NOTICE)
-		holmes.Debug("broadcast msg use_time[%v]", time.Now().Sub(start))
 	}
 }
 
