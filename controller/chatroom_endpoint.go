@@ -406,6 +406,7 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 		for i := 0; i < len(memberList); i++ {
 			chatroomMemberList[i] = memberList[i].UserId
 		}
+		holmes.Debug("chatroom member list: %v", chatroomMemberList)
 		self.broadcastChatroomMsg(chatroomMemberList, chatroomMessage, req.WeddingId, ext.BROADCAST_MSG_NOT_NOTICE)
 	}
 }
