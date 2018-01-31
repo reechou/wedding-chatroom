@@ -115,10 +115,11 @@ func (self *Logic) broadcastChatroomMsgV2(userIdList []int64,
 		return
 	}
 	broadcastMsgReq := &ext.BroadcastMsgReqData{
-		UserList: userIdList,
-		MsgType:  ext.BROADCAST_MSG_TYPE_CHATROOM,
-		Content:  string(msgBytes),
-		IsNotice: isNotice,
+		UserList:    userIdList,
+		MsgType:     ext.BROADCAST_MSG_TYPE_CHATROOM,
+		Content:     string(msgBytes),
+		IsNotice:    isNotice,
+		ChannelType: "HLBUser",
 	}
 	self.weddingExt.BroadcastMsg(broadcastMsgReq)
 }
@@ -151,10 +152,11 @@ func (self *Logic) broadcastChatroomMsg(userIdList []int64,
 		return
 	}
 	broadcastMsgReq := &ext.BroadcastMsgReqData{
-		UserList: userIdList,
-		MsgType:  ext.BROADCAST_MSG_TYPE_CHATROOM,
-		Content:  string(msgBytes),
-		IsNotice: isNotice,
+		UserList:    userIdList,
+		MsgType:     ext.BROADCAST_MSG_TYPE_CHATROOM,
+		Content:     string(msgBytes),
+		IsNotice:    isNotice,
+		ChannelType: "HLBUser",
 	}
 	self.weddingExt.BroadcastMsg(broadcastMsgReq)
 }

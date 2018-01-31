@@ -29,10 +29,11 @@ type GetWeddingUserListReqData struct {
 }
 
 type BroadcastMsgReqData struct {
-	UserList []int64 `json:"user_list"`
-	MsgType  int64   `json:"msg_type"`
-	Content  string  `json:"content"`
-	IsNotice int64   `json:"is_notice"`
+	UserList    []int64 `json:"user_list"`
+	MsgType     int64   `json:"msg_type"`
+	Content     string  `json:"content"`
+	IsNotice    int64   `json:"is_notice"`
+	ChannelType string  `json:"channel_type"`
 }
 
 type WeddingServiceReq struct {
