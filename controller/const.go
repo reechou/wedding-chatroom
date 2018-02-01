@@ -8,6 +8,7 @@ const (
 // chatroom method
 const (
 	METHOD_CREATE_CHATROOM          = "CreateChatroom"
+	METHOD_GET_CHATROOM             = "GetChatroom"
 	METHOD_ENTER_CHATROOM           = "EnterChatroom"
 	METHOD_ENTER_CHATROOM_WITH_INFO = "EnterChatroomWithInfo"
 	METHOD_SEND_MSG                 = "SendMessage"

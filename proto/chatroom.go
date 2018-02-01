@@ -17,6 +17,12 @@ type CreateSceneChatroomReq struct {
 	Name      string `json:"name"`
 }
 
+// 根据婚礼id和场景获取房间号
+type GetSceneChatroomReq struct {
+	WeddingId int64  `json:"weddingId"`
+	ChatType  string `json:"chatType"`
+}
+
 // 进入现场房间
 type EnterChatroomReq struct {
 	WeddingId int64   `json:"weddingId"`

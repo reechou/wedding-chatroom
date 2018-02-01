@@ -29,6 +29,8 @@ func (self *Logic) runRpc(w http.ResponseWriter, r *http.Request) {
 	switch methodName {
 	case METHOD_CREATE_CHATROOM:
 		self.CreateSceneChatroom(w, r)
+	case METHOD_GET_CHATROOM:
+		self.GetSceneChatroom(w, r)
 	case METHOD_ENTER_CHATROOM:
 		self.EnterChatroom(w, r)
 	case METHOD_ENTER_CHATROOM_WITH_INFO:
@@ -186,6 +188,40 @@ func (self *Logic) CreateSceneChatroom(w http.ResponseWriter, r *http.Request) {
 		holmes.Error("create chatroom error: %v", err)
 		rsp.Code = proto.RESPONSE_ERR
 		rsp.Msg = proto.MSG_ERROR_SYSTEM
+	}
+}
+
+func (self *Logic) GetSceneChatroom(w http.ResponseWriter, r *http.Request) {
+	rsp := &proto.Response{Code: proto.RESPONSE_OK}
+	defer func() {
+		WriteJSON(w, http.StatusOK, rsp)
+	}()
+
+	if r.Method != "POST" {
+		return
+	}
+
+	req := &proto.GetSceneChatroomReq{}
+	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
+		holmes.Error("GetSceneChatroom json decode error: %v", err)
+		return
+	}
+
+	chatroom := &models.Chatroom{
+		WeddingId: req.WeddingId,
+		ChatType:  req.ChatType,
+	}
+	if has, err := models.GetChatroom(chatroom); err != nil {
+		holmes.Error("get chatroom error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
+		rsp.Msg = proto.MSG_ERROR_SYSTEM
+	} else {
+		if !has {
+			rsp.Code = proto.RESPONSE_ERR
+			rsp.Msg = proto.MSG_ERROR_CHATROOM_NOT_FOUND
+			return
+		}
+		rsp.Data = chatroom
 	}
 }
 
