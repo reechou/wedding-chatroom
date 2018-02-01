@@ -176,6 +176,7 @@ func (self *Logic) CreateSceneChatroom(w http.ResponseWriter, r *http.Request) {
 	req := &proto.CreateSceneChatroomReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("CreateChatroom json decode error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
 		return
 	}
 
@@ -204,6 +205,7 @@ func (self *Logic) GetSceneChatroom(w http.ResponseWriter, r *http.Request) {
 	req := &proto.GetSceneChatroomReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("GetSceneChatroom json decode error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
 		return
 	}
 
@@ -238,6 +240,7 @@ func (self *Logic) EnterChatroom(w http.ResponseWriter, r *http.Request) {
 	req := &proto.EnterChatroomReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("EnterChatroom json decode error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
 		return
 	}
 
@@ -300,6 +303,7 @@ func (self *Logic) EnterChatroomWithInfo(w http.ResponseWriter, r *http.Request)
 	req := &proto.EnterChatroomReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("EnterChatroomWithInfo json decode error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
 		return
 	}
 	holmes.Debug("enter room req: %+v", req)
@@ -363,6 +367,7 @@ func (self *Logic) SendChatroomMsg(w http.ResponseWriter, r *http.Request) {
 	req := &proto.SendChatroomMsgReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("SendChatroomMsg json decode error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
 		return
 	}
 
@@ -462,6 +467,7 @@ func (self *Logic) BroadcastMsg(w http.ResponseWriter, r *http.Request) {
 	req := &proto.BroadcastMsgReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("BroadcastChatroomMsg json decode error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
 		return
 	}
 
@@ -522,6 +528,7 @@ func (self *Logic) GetChatroomMessageList(w http.ResponseWriter, r *http.Request
 	req := &proto.GetChatroomMsgListReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("GetChatroomMessageList json decode error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
 		return
 	}
 
@@ -588,6 +595,7 @@ func (self *Logic) GetChatroomMemberList(w http.ResponseWriter, r *http.Request)
 	req := &proto.GetChatroomMemberListReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("GetChatroomMemberList json decode error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
 		return
 	}
 	holmes.Debug("get chatroom member list req: %v", req)
@@ -648,6 +656,7 @@ func (self *Logic) SetChatroomStatus(w http.ResponseWriter, r *http.Request) {
 	req := &proto.SetChatroomStatusReq{}
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
 		holmes.Error("SetChatroomStatus json decode error: %v", err)
+		rsp.Code = proto.RESPONSE_ERR
 		return
 	}
 	holmes.Debug("set chatroom status req: %v", req)
