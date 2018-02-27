@@ -83,7 +83,11 @@ func (self *Logic) systemMsg(chatroomId, weddingId, userId int64, msg string) {
 			message.Msg = strings.Replace(message.Msg, "%v", "", -1)
 		} else {
 			if len(userList) != 0 {
-				message.Msg = fmt.Sprintf(msg, userList[0].NickName)
+				name := userList[0].RealName
+				if name == "" {
+					name = userList[0].NickName
+				}
+				message.Msg = fmt.Sprintf(msg, name)
 				md.User = &userList[0]
 			}
 		}
