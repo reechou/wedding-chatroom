@@ -31,7 +31,7 @@ func InitDB(cfg *config.Config) {
 		x.ShowSQL(true)
 	}
 
-	x.SetMaxIdleConns(30)
+	x.SetMaxIdleConns(0)
 
 	// sync tables
 	if err = x.Sync2(new(Chatroom),
